@@ -1,7 +1,9 @@
 import express, { json } from 'express';
 import router from './Controllers/AuthMiddleware';
 import login from './Controllers/Security';
-//import { connectDB } from './controllers/Db.js';
+import { connectDB } from './Controllers/Db';
+import userModel from './Models/User';
+import eventModel from './Models/Event';
 
 // try {
 //     await connectDB()
@@ -14,6 +16,14 @@ import login from './Controllers/Security';
 const app = express();
 
 app.use(json());
+
+app.get('/initWorld', async (req, res) => {
+  await connectDB();
+  await userModel.createCollection();
+  await eventModel.createCollection();
+  res.send('ok')
+})
+
 app.use('/security/login', login);
 app.use('/api', router);
 

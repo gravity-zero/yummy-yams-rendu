@@ -1,5 +1,5 @@
-import type { User } from './User'
-import type { Event } from './Event'
+import type { User } from './IUser'
+import type { Event } from './IEvent'
 
 export type JwtPayload = () => {
     iat: Date,

@@ -17,6 +17,9 @@ login.post('', async(req: Request, res: Response) => {
         res.send({success: false, message: "Pas d'email ou pas de password = pas de chocolat <3"}).status(404)
     }
 
+    console.log(email, password);
+    
+
     const user = await collection.findOne({ email: email });
 
     if(user)
@@ -25,12 +28,12 @@ login.post('', async(req: Request, res: Response) => {
 
         if (passwordMatch) {
             //TODO Generation JWT + COOKIE
-            res.send({success: true, message: user}).status(200)
+            res.status(200).send({success: true, message: user})
         } else {
-            res.send({success: false, message: "Vous n'êtes pas connecté"}).status(404)
+            res.status(200).send({success: false, message: "Vous n'êtes pas connecté"})
         }
     }
-    res.send({success: false, message: "Vous n'êtes pas connecté"}).status(404)
+    res.status(404).send({success: false, message: "Vous n'êtes pas connecté"})
     
 })
 
