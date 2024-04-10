@@ -1,3 +1,9 @@
+database
+back/node_modules
+back/build
+front/node_modules
+front/build
+
 # Logs
 logs
 *.log

@@ -1,0 +1,13 @@
+FROM node:21-alpine
+
+RUN apk update
+
+# RUN npm install pm2 -g
+
+# WORKDIR /var/www/yum/front
+# COPY . .
+# RUN npm install && npm run build
+
+# EXPOSE 1000
+
+# CMD ["pm2-runtime", "/var/www/yum/front/build/index.js","--name","react"]

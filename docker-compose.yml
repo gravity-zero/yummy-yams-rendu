@@ -1,0 +1,86 @@
+version: "3.9"
+
+services:
+  front:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.front
+    container_name: react
+    restart: always
+    command: sh -c "cd /app && npm i && npm run dev"
+    depends_on:
+      - backend
+    ports:
+      - "1000:1000"
+    env_file:
+      - .env.dev
+    volumes:
+      - ./front:/app
+    environment:
+      - PORT=${FRONT_PORT}
+      - COOKIE_NAME=${COOKIE_NAME}
+      - BACK_ROUTE=${BACK_ROUTE}
+      - APP_ENV=${APP_ENV}
+    networks:
+      - my_custom_network
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.back
+    container_name: node
+    restart: on-failure
+    env_file:
+      - .env.dev
+    depends_on:
+      - mongo
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASS=${DB_PASS}
+      - DB_PORT=${DB_PORT}
+      - APP_ENV=${APP_ENV}
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      - ./back:/app
+    command: sh -c "cd /app && npm i -D nodemon ts-node && npm i && npm run dev"
+    ports:
+      - ${BACK_PORT}
+    networks:
+      - my_custom_network
+
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASS}
+    volumes:
+      - ./data/pastries.json:/usr/src/pastries.json
+      - database:/data/db
+    networks:
+      - my_custom_network
+
+  mongo-express:
+    container_name: mongo_ui
+    image: mongo-express:latest
+    depends_on:
+      - mongo
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${DB_USERNAME}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${DB_PASS}
+      - ME_CONFIG_BASICAUTH_USERNAME=root
+      - ME_CONFIG_BASICAUTH_PASSWORD=root
+    ports:
+      - "8081:8081"
+    networks:
+      - my_custom_network
+
+networks:
+  my_custom_network:
+
+volumes:
+  database:
