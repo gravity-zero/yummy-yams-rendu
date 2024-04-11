@@ -55,11 +55,13 @@ services:
     ports:
       - "${DB_PORT}:${DB_PORT}"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${DB_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASS}
+      MONGO_INITDB_DATABASE: bakery
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASS}
     volumes:
-      - ./data/pastries.json:/usr/src/pastries.json
-      - database:/data/db
+      - ./init.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./data/pastries.json:/docker-entrypoint-initdb.d/pastries.json
+      - ./database:/data/db
     networks:
       - my_custom_network
 

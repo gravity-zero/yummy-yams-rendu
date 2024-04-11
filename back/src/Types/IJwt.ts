@@ -1,8 +1,9 @@
-import type { User } from './IUser'
-import type { Event } from './IEvent'
+import type { IUser } from './IUser'
+import type { IEvent } from './IEvent'
 
-export type JwtPayload = () => {
-    iat: Date,
-    user: User,
-    event: Event | null
+export type IJwt = {
+    iat: Number,
+    //exp: Number,
+    user: IUser,
+    event?: IEvent | null
 }

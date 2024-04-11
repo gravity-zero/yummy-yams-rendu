@@ -1,4 +1,4 @@
 import jwt from 'jsonwebtoken';
-import type { User } from "../Types/IUser";
+import type { IUser } from "../Types/IUser";
 
 

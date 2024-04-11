@@ -1,4 +1,4 @@
-export type ApiResponse = () => {
-    "success": boolean,
-    "message": Object|String,
+export type ApiResponse = {
+    success: boolean,
+    message: Object|String,
 }

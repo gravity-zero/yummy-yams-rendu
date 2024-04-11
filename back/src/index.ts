@@ -1,9 +1,11 @@
 import express, { json } from 'express';
-import router from './Controllers/AuthMiddleware';
-import login from './Controllers/Security';
+import authenticateToken from './Controllers/AuthMiddleware';
+import userRouter from './Controllers/User';
+import eventRouter from './Controllers/Event';
 import { connectDB } from './Controllers/Db';
 import userModel from './Models/User';
 import eventModel from './Models/Event';
+import cookieParser from 'cookie-parser';
 
 // try {
 //     await connectDB()
@@ -16,6 +18,7 @@ import eventModel from './Models/Event';
 const app = express();
 
 app.use(json());
+app.use(cookieParser());
 
 app.get('/initWorld', async (req, res) => {
   await connectDB();
@@ -24,8 +27,9 @@ app.get('/initWorld', async (req, res) => {
   res.send('ok')
 })
 
-app.use('/security/login', login);
-app.use('/api', router);
+app.use('/user', userRouter);
+
+app.use('/api', authenticateToken, eventRouter);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

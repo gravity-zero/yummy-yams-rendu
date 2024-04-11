@@ -1,34 +1,35 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { IJwt } from '../Types/IJwt';
 
-const router = Router();
+// const router = Router();
 
-router.get('', authenticateToken, async (req, res) => {
-    console.log("api routeur");
+// router.get('', authenticateToken, async (req, res, next) => {
+//     console.log("api routeur");
     
-    res.send("toto");
-});
-
-router.post('/user', async (req, res) => {
-    console.log("Créa User");
-})
+//     res.send("toto");
+// });
 
 function authenticateToken(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
+    let token = authHeader && authHeader.split(' ')[1]
+    
+    if (!token) {
+        token = req.cookies.bakeryToken;
+    }
   
     if (token == null) return res.sendStatus(401)
   
-    jwt.verify(token, process.env.JWT_SECRET as string, { algorithms: ['HS256'] }, (err: any, user: any) => {
-      console.log(err)
+    jwt.verify(token, process.env.JWT_SECRET as string, { algorithms: ['HS512'] }, (err: any, payload: any) => {
+    if (err) {
+        console.error(err);
+        return res.status(401).send({ success: false, message: 'Token JWT invalide' });
+    }
   
-      if (err) return res.sendStatus(403)
-  
-      console.log(user);
+      console.log("payload ....", payload);
       
-  
       next()
     })
   }
 
-export default router;
+export default authenticateToken;
