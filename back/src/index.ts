@@ -1,10 +1,10 @@
 import express, { json } from 'express';
 import authenticateToken from './Controllers/AuthMiddleware';
 import userRouter from './Controllers/User';
-import eventRouter from './Controllers/Event';
+import gameEventRouter from './Controllers/GameEvent';
 import { connectDB } from './Controllers/Db';
 import userModel from './Models/User';
-import eventModel from './Models/Event';
+import gameEventModel from './Models/GameEvent';
 import cookieParser from 'cookie-parser';
 
 // try {
@@ -23,13 +23,13 @@ app.use(cookieParser());
 app.get('/initWorld', async (req, res) => {
   await connectDB();
   await userModel.createCollection();
-  await eventModel.createCollection();
-  res.send('ok')
+  await gameEventModel.createCollection();
+  res.send('ok');
 })
 
 app.use('/user', userRouter);
 
-app.use('/api', authenticateToken, eventRouter);
+app.use('/api', authenticateToken, gameEventRouter);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

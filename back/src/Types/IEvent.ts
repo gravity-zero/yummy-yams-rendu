@@ -1,6 +1,5 @@
 export type IEvent = {
-    name: String,
-    isActive: boolean,
-    points: Number,
+    name: string
+    isActive: boolean
     date: Date
 }

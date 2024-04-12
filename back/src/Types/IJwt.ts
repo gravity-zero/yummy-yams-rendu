@@ -2,8 +2,8 @@ import type { IUser } from './IUser'
 import type { IEvent } from './IEvent'
 
 export type IJwt = {
-    iat: Number,
-    //exp: Number,
-    user: IUser,
+    iat: number,
+    exp: number,
+    user: Omit<IUser, 'password'>,
     event?: IEvent | null
 }
