@@ -19,12 +19,10 @@ gameEventRouter.post('/game', async(req: Request, res: Response) => {
 
     if(!payload)
     {
-        console.log("le middleware est passé mais le payload est null, we have a situation");
-        return res.status(401).send("we have a situation");
+        return res.status(401).send("miss some informations");
     }
 
     const user = await userModel.findOne({email: payload?.user.email});
-    console.log(user);
     
     if(!user){
         return res.status(401).send("we really have a situation");

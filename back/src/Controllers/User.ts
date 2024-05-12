@@ -33,12 +33,13 @@ userRouter.post('/register', async(req: Request, res: Response) => {
           password: await bcrypt.hash(password, 10),
           createdAt: new Date()
         });    
+    console.log();
     
-    if (!result?.insertedId)
+    if (!result?._id.toString())
         return res.status(404)
                     .send({success: false, message: "Impossible d'enregistrer cette utilisateur"})
 
-    const token: string = generateJwt(composePayload({email: email, pseudo: pseudo}));
+    const token: string = generateJwt(composePayload({id: result?._id.toString(), email: email, pseudo: pseudo}));
 
     return res.cookie('bakeryToken', token, { httpOnly: true })
                 .status(200)

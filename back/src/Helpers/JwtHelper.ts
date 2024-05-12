@@ -8,11 +8,11 @@ export const generateJwt = (payload: IJwt): string => {
 
 export const composePayload = (params: any): IJwt => {
     const exp = new Date();
-    exp.setHours(exp.getHours() + 12);
+    exp.setHours(exp.getHours() + 1);
     return {
         iat: new Date().getTime(),
         exp: exp.getTime(),
-        user: { email: params?.email, pseudo: params?.pseudo } as IUser 
+        user: { id: params?.id, email: params?.email, pseudo: params?.pseudo } as IUser 
     };
 }
 
@@ -23,8 +23,7 @@ export const checkTokenAndValidity = (token: string): Boolean => {
             if(decoded){
                 const now: number = new Date().getTime();
                 const decodedObject = decoded as IJwt;
-                if(decodedObject.exp > now)                
-                    isValid = true;
+                isValid = decodedObject.exp > now;
             }
     });
     return isValid;

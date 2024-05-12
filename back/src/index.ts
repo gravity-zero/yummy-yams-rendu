@@ -7,14 +7,6 @@ import userModel from './Models/User';
 import gameEventModel from './Models/GameEvent';
 import cookieParser from 'cookie-parser';
 
-// try {
-//     await connectDB()
-
-//     console.log('Database connected successfully');
-// } catch (error) {
-//     console.log(error)
-// }
-
 const app = express();
 
 app.use(json());
