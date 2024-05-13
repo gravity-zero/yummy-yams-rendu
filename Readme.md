@@ -9,12 +9,34 @@ make dev
 _____
 ```bash
 curl http://localhost:3001/initWorld
+
 ```
 
 ## API
-### User
- "/user/register"
- "/user/login"
-### GameEvent
- "/game"
- "/game/rank"
+### <u>User</u>
+<i> "/user/register"</i>
+ ```bash
+ #Body 
+ {
+    "email": "toto@yopmail.com",
+    "pseudo": "Toto",
+    "password": "3652"
+}
+```
+<i> "/user/login"</i>
+ ```bash
+ #Body 
+ {
+    "email": "toto@yopmail.com",
+    "password": "3652"
+}
+```
+
+### <u>GameEvent</u>
+ <i>"/api/game"</i>
+ ```bash
+ #Body
+ {
+    "eventName": "pastries_game"
+ }
+ ```
