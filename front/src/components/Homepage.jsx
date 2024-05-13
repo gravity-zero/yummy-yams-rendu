@@ -1,11 +1,20 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import patisserie1 from '../assets/pastries/patisserie1.jpg'
+import patisserie2 from '../assets/pastries/patisserie2.jpg'
+import patisserie3 from '../assets/pastries/patisserie3.jpg'
 
 const HomePage = () => {
+  const userLoggedIn = false; // Remplacez false par la logique réelle pour vérifier si l'utilisateur est connecté
+
   return (
     <div>
       <header className="bg-gray-800 p-4 text-white text-center">
         <h1 className="text-3xl font-bold">Bienvenue à la Boulangerie Le Bon Pain</h1>
         <p className="mt-2">Découvrez notre sélection de pains frais et de délicieuses pâtisseries artisanales</p>
+        {!userLoggedIn && (
+          <Link to="/register" className="text-blue-400 hover:underline">S'inscrire</Link>
+        )}
       </header>
       <main className="container mx-auto py-8">
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -19,6 +28,11 @@ const HomePage = () => {
           </div>
         </section>
       </main>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 px-12">
+        <img src={patisserie1} alt="Image de patisseries" className="rounded-lg shadow-md" style={{ width: '80%', height: 'auto' }} />
+        <img src={patisserie2} alt="Image de patisseries" className="rounded-lg shadow-md" style={{ width: '80%', height: 'auto' }} />
+        <img src={patisserie3} alt="Image de patisseries" className="rounded-lg shadow-md" style={{ width: '80%', height: 'auto' }} />
+      </div>
     </div>
   );
 };

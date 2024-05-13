@@ -7,11 +7,11 @@ services:
       dockerfile: ./docker/Dockerfile.front
     container_name: react
     restart: always
-    command: sh -c "cd /app && npm i && npm run dev"
+    command: sh -c "cd /app && npm i -D nodemon && npm i && npm run dev"
     depends_on:
       - backend
     ports:
-      - "1000:1000"
+      - "1000:5173"
     env_file:
       - .env.dev
     volumes:
