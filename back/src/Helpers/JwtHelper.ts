@@ -17,16 +17,16 @@ export const composePayload = (params: any): IJwt => {
 }
 
 export const checkTokenAndValidity = (token: string): Boolean => {
-    let isValid = false;
-    jwt.verify(token, process.env.JWT_SECRET as string, { algorithms: ['HS512'] },
-         (error, decoded) => {
-            if(decoded){
-                const now: number = new Date().getTime();
-                const decodedObject = decoded as IJwt;
-                isValid = decodedObject.exp > now;
-            }
-    });
-    return isValid;
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string, { algorithms: ['HS512'] });
+        const now = new Date().getTime();
+        const decodedObject = decoded as IJwt;
+        
+        return decodedObject.exp > now;
+    } catch (err) {
+        console.error('Invalid token', err)
+        return false;
+    }
 }
 
 export const decodePayload = (token: string): IJwt|null => {

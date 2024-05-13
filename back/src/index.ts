@@ -16,12 +16,13 @@ app.get('/initWorld', async (req, res) => {
   await connectDB();
   await userModel.createCollection();
   await gameEventModel.createCollection();
+
   res.send('ok');
 })
 
 app.use('/user', userRouter);
 
-app.use('/api', authenticateToken, gameEventRouter);
+app.use('/api/game', authenticateToken, gameEventRouter);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
