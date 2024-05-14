@@ -1,18 +1,73 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrentUser } from '../redux/slices/userSlice';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { decodeToken } from '../lib/jwt';
 
 const LoginForm = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
+  const dispatch = useDispatch();
+  const { token } = useSelector((state) => state.auth);
+
+  if(token)
+  {
+    navigate("/");
+  }
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Envoyer les données de connexion au backend
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/user/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      console.log(data);
+
+        if (data.success) {
+          dispatch(setCurrentUser({ currentUser: decodeToken(data.message.token) }));
+          //TODO Event
+          navigate("/");
+        }
+      // Swal.fire({
+      //   title: 'Connexion',
+      //   text: data.message,
+      //   icon: data.success ? 'success' : 'error',
+      //   confirmButtonText: 'OK'
+      // }).then(() => {
+      //   const payload = decodeToken(data.message);
+      //   if (data.success) {
+      //     dispatch(setCurrentUser({ currentUser: payload }));
+      //     //TODO Event
+      //     navigate("/");
+      //   }
+      // });
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        title: 'Erreur',
+        text: 'Une erreur s\'est produite lors de la connexion',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+    }
   };
 
   return (

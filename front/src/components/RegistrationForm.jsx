@@ -1,19 +1,69 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { useSelector, useDispatch } from 'react-redux';
+import { loginSuccess } from '../redux/slices/authSlice';
+import { setCurrentUser } from '../redux/slices/userSlice';
+import { decodeToken } from '../lib/jwt';
+
 
 const RegistrationForm = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
-    username: '',
+    pseudo: '',
     email: '',
     password: '',
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    
     e.preventDefault();
-    // Envoyer les données d'inscription au backend
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/user/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const res = await response.json();
+
+      if(!res.success)
+      {
+        throw new Error(res.message);
+      }
+
+      Swal.fire({
+        title: 'Enregistrement',
+        text: 'Inscription confirmé',
+        icon: res.success ? 'success' : 'error',
+        timer: 3000
+      }).then(() => {
+        dispatch(loginSuccess({ token: res.message }));
+        const jwtPayload = decodeToken(res.message);
+        dispatch(setCurrentUser({ currentUser: jwtPayload?.user }));
+        navigate("/login");
+      })
+
+    } catch (error) {
+      //console.error(error);
+      Swal.fire({
+        title: 'Erreur',
+        text: error,
+        icon: 'error',
+        confirmButtonText: 'OK'
+      })
+    }
   };
 
   return (
@@ -21,12 +71,12 @@ const RegistrationForm = () => {
       <h2 className="text-2xl font-bold mb-4">Inscription</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="username" className="block text-gray-700">Nom d'utilisateur</label>
+          <label htmlFor="pseudo" className="block text-gray-700">Nom d'utilisateur</label>
           <input
             type="text"
-            id="username"
-            name="username"
-            value={formData.username}
+            id="pseudo"
+            name="pseudo"
+            value={formData.pseudo}
             onChange={handleChange}
             className="mt-1 px-4 py-2 w-full border rounded-md focus:outline-none focus:ring focus:ring-blue-400"
           />

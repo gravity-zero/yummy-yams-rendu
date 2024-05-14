@@ -1,6 +1,6 @@
-FROM node:21-alpine
+FROM node:current
 
-RUN apk update
+RUN apt update
 
 # WORKDIR /app
 
