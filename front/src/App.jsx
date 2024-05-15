@@ -11,14 +11,14 @@ import YamsEvent from './components/YamsEvent';
 const App = () => {
   return (
     <Provider store={store}>
-      <Router>
-        <Routes>
-          <Route path="/" exact element={<Homepage />} />
-          <Route path="/register" element={<RegistrationForm />} />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path='/event' element={<YamsEvent/>} />
-        </Routes>
-      </Router>
+        <Router>
+          <Routes>
+            <Route path="/" exact element={<Homepage />} />
+            <Route path="/register" element={<RegistrationForm />} />
+            <Route path="/login" element={<LoginForm />} />
+            <Route path='/event' element={<YamsEvent/>} />
+          </Routes>
+        </Router>
     </Provider>
   );
 };

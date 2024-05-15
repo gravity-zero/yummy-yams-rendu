@@ -48,17 +48,17 @@ gameEventRouter.post('/', async(req: Request, res: Response) => {
 
     const result = checkCombination(diceResults);
 
-    let prices: Array<IPastries>|string[] = [];
+    let prices: Array<IPastries>|null = null;
     
     switch (result) {
         case "YAM'S":
-            prices = getRandomPastries( 3 ,pastries);
+            prices = getRandomPastries(3 ,pastries);
             break;
         case "CARRÉ":
-            prices = getRandomPastries( 2 ,pastries);
+            prices = getRandomPastries(2 ,pastries);
             break;
         case "DOUBLE":
-            prices = getRandomPastries( 1 ,pastries);
+            prices = getRandomPastries(1 ,pastries);
             break;
         default:
             break;
@@ -70,21 +70,31 @@ gameEventRouter.post('/', async(req: Request, res: Response) => {
             event: { name: EventName },
             user: user?._id,
             points: diceResults,
-            nbSubmitions: 1
+            nbSubmitions: prices && prices.length > 0 ? 3 : 1, // si on à un ou plusieurs Prix, on arrête le jeu, sinon + 1
+            prices: prices
         });
-
     } else if (event.nbSubmitions < 3){
-        
-        // Mettre à jour l'événement existant
         await gameEventModel.updateOne(
             { _id: event?._id },
-            { points: diceResults , $inc: { nbSubmitions: 1 } }
-        );
-    }else {
-        return res.status(200).send({success: false, message: "Fin de partie", infos: null})
+            { 
+                points: diceResults, 
+                nbSubmitions: prices && prices.length > 0 ? 3 : event.nbSubmitions + 1, // si on à un ou plusieurs Prix, on arrête le jeu, sinon +1 sur la valeur actuel
+                 prices: prices
+            });
     }
 
-    return res.status(201).send({success: true, message: null, infos: {score: diceResults, prices: prices}})
+    const isEndGame =  !(event && event.nbSubmitions >= 3) ?? false;
+    const responseData = { 
+        success: isEndGame,
+        message: isEndGame ? 'OK' : 'Fin de partie' ,
+        infos: { 
+            score: isEndGame ? diceResults : null,
+            prices:  isEndGame ? prices?.map((item) => ({ name: item?.name, image: item?.image })) : null,
+            result: isEndGame ? result : null
+        }
+    };
+
+  res.status(isEndGame ? 201 : 200).send(responseData);
 });
 
 export default gameEventRouter;

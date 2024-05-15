@@ -10,12 +10,16 @@ import cors from "cors";
 
 const app = express();
 
-  app.use(cors({origin: ['http://localhost:5173', 'http://localhost:5173/', 'http://localhost:2000'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type']}));
+app.use(cors(
+  {
+    origin: ['http://localhost:5173', 'http://localhost:5173/', 'http://localhost:2000'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }
+));
 
-  app.use(json());
-  app.use(cookieParser());
+app.use(json());
+app.use(cookieParser());
 
 app.get('/initWorld', async (req, res) => {
   await connectDB();

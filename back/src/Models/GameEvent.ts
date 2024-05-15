@@ -9,10 +9,14 @@ const gameEventSchema = new Schema<IGame>({
     user: { type: String, required: true },
     points: { type: [Number], required: true, default: [] },
     lastSubmition: { type: Date},
-    nbSubmitions: { type: Number, required: true, default: 0 }
+    nbSubmitions: { type: Number, required: true, default: 0 },
+    prices: [{
+        _id: { type: Schema.Types.ObjectId, ref: 'Pastries' },
+        name: { type: String, required: true },
+        image: { type: String, required: true },
+    }]
 });
 
-// Créer le modèle à partir du schéma
 const gameEventModel = model<IGame>('GameEvents', gameEventSchema);
 
 export default gameEventModel;
