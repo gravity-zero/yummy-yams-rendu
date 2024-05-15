@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentUser } from '../redux/slices/userSlice';
+import { loginSuccess } from '../redux/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { decodeToken } from '../lib/jwt';
@@ -16,10 +17,7 @@ const LoginForm = () => {
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
 
-  if(token)
-  {
-    navigate("/");
-  }
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -41,24 +39,11 @@ const LoginForm = () => {
       const data = await response.json();
       console.log(data);
 
-        if (data.success) {
-          dispatch(setCurrentUser({ currentUser: decodeToken(data.message.token) }));
-          //TODO Event
-          navigate("/");
-        }
-      // Swal.fire({
-      //   title: 'Connexion',
-      //   text: data.message,
-      //   icon: data.success ? 'success' : 'error',
-      //   confirmButtonText: 'OK'
-      // }).then(() => {
-      //   const payload = decodeToken(data.message);
-      //   if (data.success) {
-      //     dispatch(setCurrentUser({ currentUser: payload }));
-      //     //TODO Event
-      //     navigate("/");
-      //   }
-      // });
+      if (data.success) {
+        dispatch(loginSuccess({ token: data.message?.token }));
+        dispatch(setCurrentUser({ currentUser: decodeToken(data.message?.token) }));
+        setSuccess(true);
+      }
     } catch (error) {
       console.error(error);
       Swal.fire({
@@ -69,6 +54,13 @@ const LoginForm = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if(token || success)
+    {
+      navigate("/");
+    }
+  }, [success, token, navigate]);
 
   return (
     <div className="max-w-md mx-auto mt-8">

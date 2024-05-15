@@ -6,6 +6,7 @@ import store from './redux/store';
 import LoginForm from './components/LoginForm';
 import RegistrationForm from './components/RegistrationForm';
 import Homepage from './components/Homepage';
+import YamsEvent from './components/YamsEvent';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
           <Route path="/" exact element={<Homepage />} />
           <Route path="/register" element={<RegistrationForm />} />
           <Route path="/login" element={<LoginForm />} />
+          <Route path='/event' element={<YamsEvent/>} />
         </Routes>
       </Router>
     </Provider>

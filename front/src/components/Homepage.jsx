@@ -31,10 +31,20 @@ const HomePage = () => {
         <h1 className="text-3xl font-bold">Bienvenue à la Boulangerie Le Bon Pain</h1>
         <p className="mt-2">Découvrez notre sélection de pains frais et de délicieuses pâtisseries artisanales</p>
         {!isAuthenticated && (
-          <Link to="/register" className="text-blue-400 hover:underline">S'inscrire</Link>
+          <>
+            <Link to="/register" className="text-blue-400 hover:underline">Inscription</Link>
+            <span className="mx-6">
+              <Link to="/login" className="text-blue-400 hover:underline">Connexion</Link>
+            </span>
+          </>
         )}
         {isAuthenticated && (
-          <button onClick={handleLogout} className="text-blue-400 hover:underline">Se déconnecter</button>
+          <>
+            <Link to="/event" className="text-blue-400 hover:underline">Participer à l'évènement</Link>
+            <span className="mx-6">
+            <button onClick={handleLogout} className="text-blue-400 hover:underline">Se déconnecter</button>
+            </span>
+          </>
         )}
       </header>
       <main className="container mx-auto py-8">

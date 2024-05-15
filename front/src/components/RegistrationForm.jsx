@@ -17,7 +17,10 @@ const RegistrationForm = () => {
     password: '',
   });
 
+  const [success, setSuccess] = useState(false);
+
   const handleChange = (e) => {
+    e.preventDefault();
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -49,22 +52,28 @@ const RegistrationForm = () => {
         icon: res.success ? 'success' : 'error',
         timer: 3000
       }).then(() => {
-        dispatch(loginSuccess({ token: res.message }));
-        const jwtPayload = decodeToken(res.message);
+        dispatch(loginSuccess({ token: res.message?.token }));
+        const jwtPayload = decodeToken(res.message?.token);
         dispatch(setCurrentUser({ currentUser: jwtPayload?.user }));
-        navigate("/login");
+
+        setSuccess(true);
       })
 
     } catch (error) {
-      //console.error(error);
       Swal.fire({
         title: 'Erreur',
         text: error,
         icon: 'error',
         confirmButtonText: 'OK'
-      })
+      });
     }
   };
+
+  useEffect(() => {
+    if (success) {
+      navigate("/");
+    }
+  }, [success, navigate]);
 
   return (
     <div className="max-w-md mx-auto mt-8">
