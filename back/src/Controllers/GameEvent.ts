@@ -79,9 +79,19 @@ gameEventRouter.post('/', async(req: Request, res: Response) => {
             { 
                 points: diceResults, 
                 nbSubmitions: prices && prices.length > 0 ? 3 : event.nbSubmitions + 1, // si on à un ou plusieurs Prix, on arrête le jeu, sinon +1 sur la valeur actuel
-                 prices: prices
+                prices: prices
             });
     }
+
+    if(prices && prices.length > 0) {
+        for (const price of prices) {
+          await pastriesModel.findByIdAndUpdate(
+            price?._id,
+            { $inc: { quantityWon: 1 } },
+            { new: true }
+          );
+        }
+      }
 
     const isEndGame =  !(event && event.nbSubmitions >= 3) ?? false;
     const responseData = { 
@@ -96,5 +106,35 @@ gameEventRouter.post('/', async(req: Request, res: Response) => {
 
   res.status(isEndGame ? 201 : 200).send(responseData);
 });
+
+gameEventRouter.get('/ranking', async (req: Request, res: Response) => {
+    await connectDB();
+    try {
+        const users = await userModel.find({});
+        const events = await gameEventModel.find({}).populate('user').populate('prices');
+        
+        const statistics = users.map(user => {
+            const userEvents = events.filter(event => event.user.toString() === user._id.toString());
+            
+            const totalSubmissions = userEvents.reduce((acc, event) => acc + event.nbSubmitions, 0);
+            const totalPoints = userEvents.reduce((acc, event) => acc + event.points.reduce((a, b) => a + b, 0), 0);
+            const totalPrizesWon = userEvents.reduce((acc, event) => acc + (event.prices ? event.prices?.length : 0), 0);
+
+            return {
+                userId: user._id,
+                email: user.email,
+                totalSubmissions,
+                totalPoints,
+                totalPrizesWon
+            };
+        });
+  
+      res.status(200).send({success: false, message: 'OK', ranking: statistics});
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({success: false, message: 'Une erreur est survenue'});
+    }
+  });
+  
 
 export default gameEventRouter;

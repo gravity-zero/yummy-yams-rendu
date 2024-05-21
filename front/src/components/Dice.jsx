@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef, Component } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import gsap from "gsap";
-import { useNavigate } from 'react-router-dom';
 import "../assets/css/yamsEvent.css";
 
 const Dice = ({ value, dontShuffle = false }) => {
@@ -12,14 +11,9 @@ const Dice = ({ value, dontShuffle = false }) => {
 
   const dice = useRef(null);
 
-  const dispatch = useDispatch();
-  const { token } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
-
   useEffect(() => {
-    if (!dice?.current) return;
+    if (!dice.current || dontShuffle) return;
 
-    if (dontShuffle) return;
     const ctx = gsap.context(() => {
       gsap.from(dice.current, {
         rotationX: "random(720, 1080)",
@@ -28,8 +22,9 @@ const Dice = ({ value, dontShuffle = false }) => {
         duration: "random(2, 3)",
       });
     }, dice.current);
+    
     return () => ctx.revert();
-  }, []);
+  }, [value, dontShuffle]); // Dépendance sur la valeur et dontShuffle
 
   return (
     <div className="dice-container">

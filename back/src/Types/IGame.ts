@@ -9,5 +9,5 @@ export type IGame = {
     points: number[],
     lastSubmition: Date,
     nbSubmitions: number
-    prices: IPastries
+    prices: IPastries[]
 }

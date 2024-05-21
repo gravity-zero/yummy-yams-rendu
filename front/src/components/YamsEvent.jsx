@@ -100,23 +100,44 @@ const YamsEvent = () => {
     }
   };
 
+  const renderPriceResult= (value, index) => {
+    const price = prices[index] ?? {};
+    const {image, name} = price ?? {};
+
+    return (
+      <div className='flex items-center' key={index + "price.result"}>
+      {price && image && (
+      <div className="flex flex-col items-center mt-2">
+        <img src={composeImagePriceUrl(image)} alt={name} className="rounded-lg shadow-md" style={{ width: '100px', height: '100px' }} />
+        <div className="text-center mt-2">{name}</div>
+      </div>
+      )}
+    </div>)
+
+  }
+
+  const renderDiceResult = (value, index) => {
+    return (<div key={index} className={`'mr-4'`}>
+      <Dice value={value} rolling={rolling} />
+      </div>)
+
+  }
+
   return (
     <div className="flex flex-col items-center">
       {result && <div className="text-center text-2xl font-bold mb-4">Résultat: <u>{result}</u></div>}
       <div className="flex justify-center">
       {prices && prices[0]?.image && ( <div>Vous avez gagnée :)</div>)}
-        {score && score.map((value, index) => (
-          <div key={index} className={`${index === 0 ? 'ml-4' : 'mr-4'}`}>
-            <Dice value={value} rolling={rolling} />
-            {prices && prices[index]?.image && (
-            <div className="flex flex-col items-center mt-2">
-              <img src={prices ? composeImagePriceUrl(prices[index]?.image ?? '') : 'path/to/default/image'} alt={prices ? prices[index]?.name : ''} className="rounded-lg shadow-md" style={{ width: '100px', height: '100px' }} />
-              <div className="text-center mt-2">{prices ? prices[index]?.name : ''}</div>
-            </div>
-            )}
-          </div>
+        {score?.map((value, index) => (
+          renderDiceResult(value, index)
         ))}
       </div>
+      <div>
+        {prices?.map((price, index) => (
+          renderPriceResult(price, index)
+        ))}
+      </div>
+      
       <button
         onClick={handleRollDice}
         disabled={rolling}
